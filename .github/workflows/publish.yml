@@ -18,11 +18,13 @@ jobs:
       - run: corepack enable
       - run: yarn config set npmRegistryServer "https://registry.npmjs.org"
       - run: yarn install
-      - name: create changeset
+      - name: Create Changeset
         run: yarn changeset
-      - name: build
+      - name: Version Update
+        run: yarn version
+      - name: Build
         run: yarn build
-      - name: publish
+      - name: Publish
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
