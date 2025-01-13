@@ -4,6 +4,12 @@ on:
     branches:
       - "**"
       - "!main"
+
+# 권한 설정 추가
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,7 +36,7 @@ jobs:
               return;
             }
 
-            // 기존 PR 체크
+            // 기존 PR 체크 
             const prs = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -47,10 +53,10 @@ jobs:
             let title = commitMessage;
             let reviewer = null;
 
-            const reviewerMatch = commitMessage.match(///(.+)$/);
+            const reviewerMatch = commitMessage.match(/\/\/\/(.+)$/);
             if (reviewerMatch) {
               reviewer = reviewerMatch[1].trim();
-              title = commitMessage.replace(///${reviewer}, '').trim();
+              title = commitMessage.replace(/\/\/\/.*$/, '').trim();
             }
 
             // PR 생성
