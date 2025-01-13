@@ -1,5 +1,5 @@
 {
-  "name": "github-notion-pr",
+  "name": "notion-github",
   "version": "0.1.0",
   "description": "GitHub and Notion integration for PR automation",
   "main": "dist/index.js",
@@ -9,7 +9,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "upload": "tsup && npm publish",
+    "lint": "tsc"
   },
   "engines": {
     "node": ">=16"
@@ -21,6 +23,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@changesets/cli": "^2.27.11",
     "@notionhq/client": "^2.0.0",
     "@octokit/rest": "^19.0.0",
     "commander": "^11.0.0"
