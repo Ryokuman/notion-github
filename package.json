@@ -1,14 +1,31 @@
 {
-  "name": "github-notion",
-  "version": "1.0.0",
-  "description": "hello",
-  "main": "index.js",
+  "name": "github-notion-pr",
+  "version": "0.1.0",
+  "description": "GitHub and Notion integration for PR automation",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup"
   },
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^16.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
   "dependencies": {
-    "typescript": "^5.7.3"
+    "@notionhq/client": "^2.0.0",
+    "@octokit/rest": "^19.0.0",
+    "commander": "^11.0.0"
+  },
+  "bin": {
+    "pr-cli": "dist/cli.cjs"
   }
 }
