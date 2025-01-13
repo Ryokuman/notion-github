@@ -1,0 +1,80 @@
+name: CI
+on:
+  push:
+    branches:
+      - "**"
+      - "!main"
+
+# 권한 설정 추가
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: corepack enable
+      - run: yarn install
+      - run: yarn lint && yarn build
+      - name: Create PR
+        if: success()
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const commitMessage = context.payload.head_commit.message;
+            const branchName = context.ref.replace('refs/heads/', '');
+
+            // [GNP-**] 패턴 체크
+            if (!commitMessage.match(/^\[GNP-\d+\].+/)) {
+              console.log('Commit message does not match required pattern');
+              return;
+            }
+
+            // 기존 PR 체크 
+            const prs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${branchName}`,
+              state: 'open'
+            });
+
+            if (prs.data.length > 0) {
+              console.log('PR already exists');
+              return;
+            }
+
+            // PR 제목과 리뷰어 파싱
+            let title = commitMessage;
+            let reviewer = null;
+
+            const reviewerMatch = commitMessage.match(/\/\/\/(.+)$/);
+            if (reviewerMatch) {
+              reviewer = reviewerMatch[1].trim();
+              title = commitMessage.replace(/\/\/\/.*$/, '').trim();
+            }
+
+            // PR 생성
+            const pr = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              head: branchName,
+              base: 'main',
+              body: ''
+            });
+
+            // 리뷰어 설정
+            if (reviewer) {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.data.number,
+                reviewers: [reviewer]
+              });
+            }
