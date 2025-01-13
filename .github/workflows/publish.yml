@@ -1,0 +1,23 @@
+name: Publish
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${GITHUB_WORKFLOW}-${GITHUB_REF}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: yarn/action-setup@v2
+        with:
+          version: 1.22.22
+      - run: yarn install
+      - name: create changeset
+        run: yarn changeset
+      - name: build
+        run: yarn build
+      - name: publish
+        run: yarn upload
