@@ -21,7 +21,7 @@ export async function action(options: CreateOptions) {
       options.repo = config.defaultRepository;
     }
 
-    const [owner, repo] = options.repo.split("/");
+    const [owner, repo] = (options.repo || config.defaultRepository || "").split("/");
     const octokit = new Octokit({ auth: config.githubToken });
 
     // 2. 레포지토리 형식 검증
@@ -54,6 +54,9 @@ export async function action(options: CreateOptions) {
     // 4. PR 생성
     console.log(getMessage("creatingPR", lang));
     try {
+      console.log("Config:", config); // 설정 확인
+      console.log("Creating PR with options:", options); // PR 옵션 확인
+
       const response = await octokit.pulls.create({
         owner,
         repo,
@@ -83,10 +86,6 @@ export async function action(options: CreateOptions) {
         }
       }
 
-      // PR URL 출력
-      console.log(getMessage("prCreateSuccess", lang, response.data.html_url));
-
-      // PR 생성 후
       if (config.discordWebhook) {
         try {
           await sendDiscordNotification(
@@ -94,26 +93,26 @@ export async function action(options: CreateOptions) {
             options.title,
             response.data.html_url,
             config.defaultReviewers,
-            lang
+            lang,
+            config.discordTemplate,
+            config.discordReviewerMapping
           );
           console.log(getMessage("discordNotificationSent", lang));
         } catch (error: any) {
           console.error(getMessage("discordNotificationFailed", lang, error.message));
         }
       }
+
+      console.log(getMessage("prCreateSuccess", lang, response.data.html_url));
     } catch (e: any) {
-      if (e.status === 401) {
+      if (e.message.includes("Bad credentials")) {
+        console.error(getMessage("invalidToken", lang));
+      } else if (e.message.includes("Not Found")) {
         console.error(getMessage("accessError", lang));
         console.error(getMessage("checkToken", lang));
-        console.error(getMessage("checkRepoExists", lang, `${owner}/${repo}`));
-      } else if (e.message.includes("Validation Failed")) {
-        console.error(getMessage("validationError", lang));
-        console.error(getMessage("checkHeadBranch", lang, options.head));
-        console.error(getMessage("checkBaseBranch", lang, options.base || "main"));
-        console.error(getMessage("checkExistingPR", lang));
+        console.error(getMessage("checkRepo", lang));
       } else {
-        console.error(getMessage("unknownError", lang));
-        console.error(getMessage("commandError", lang, e.message));
+        console.error(e.message);
       }
       process.exit(1);
     }
