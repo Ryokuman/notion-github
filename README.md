@@ -50,3 +50,13 @@ pr-cli create --help # create 명령어 도움말
 ## 라이선스
 
 MIT
+
+## 설정
+
+1. 홈 디렉토리에 `notion_github_config.json` 파일을 생성합니다:
+
+```json
+{
+  "githubToken": "your_github_token_here"
+}
+```
