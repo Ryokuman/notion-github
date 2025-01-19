@@ -6,7 +6,9 @@ export function createCommand(program: Command) {
     .command("create")
     .description("Create a new PR")
     .requiredOption("--title <title>", "PR title")
+    .requiredOption("--head <head>", "Head branch")
+    .requiredOption("--repo <repo>", "Repository (owner/repo)")
     .option("--description <description>", "PR description")
-    .option("--branch <branch>", "Target branch", "main")
+    .option("--base <base>", "Base branch", "main")
     .action(action);
 }

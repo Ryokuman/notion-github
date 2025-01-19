@@ -1,5 +1,7 @@
 export interface CreateOptions {
   title: string;
   description?: string;
-  branch?: string;
+  head: string;
+  base?: string;
+  repo: string;
 }
