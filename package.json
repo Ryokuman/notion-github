@@ -19,17 +19,18 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^16.0.0",
+    "@types/node": "^16.18.124",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "@changesets/cli": "^2.27.11",
     "@notionhq/client": "^2.0.0",
-    "@octokit/rest": "^19.0.0",
-    "commander": "^11.0.0"
+    "@octokit/rest": "^19.0.13",
+    "commander": "^11.0.0",
+    "dotenv": "^16.4.7"
   },
   "bin": {
-    "pr-cli": "dist/cli.cjs"
+    "pr-cli": "dist/cli.js"
   }
 }
