@@ -71,9 +71,10 @@ export async function action(options: CreateOptions) {
             pull_number: response.data.number,
             reviewers: config.defaultReviewers,
           });
-          console.log(getMessage("reviewersAdded", lang));
-        } catch (reviewError) {
+          console.log(getMessage("reviewersAdded", lang, config.defaultReviewers.join(", ")));
+        } catch (reviewError: any) {
           console.error(getMessage("reviewerAddFailed", lang));
+          console.error(getMessage("reviewerError", lang, reviewError.message));
         }
       }
 

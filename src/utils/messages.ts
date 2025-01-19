@@ -103,12 +103,16 @@ export const messages: Messages = {
     ko: "- 이미 동일한 브랜치로 생성된 PR이 있는지 확인해주세요",
   },
   reviewersAdded: {
-    en: "Default reviewers have been added to the PR",
-    ko: "기본 리뷰어가 PR에 추가되었습니다",
+    en: "\nDefault reviewers have been added: %s",
+    ko: "\n기본 리뷰어가 추가되었습니다: %s",
   },
   reviewerAddFailed: {
-    en: "Failed to add reviewers to the PR",
-    ko: "리뷰어 추가에 실패했습니다",
+    en: "\nFailed to add reviewers:",
+    ko: "\n리뷰어 추가 실패:",
+  },
+  reviewerError: {
+    en: "Error details: %s",
+    ko: "오류 내용: %s",
   },
 };
 
