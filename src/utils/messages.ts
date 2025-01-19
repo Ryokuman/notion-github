@@ -114,6 +114,14 @@ export const messages: Messages = {
     en: "Error details: %s",
     ko: "오류 내용: %s",
   },
+  selfReviewError: {
+    en: "Cannot add yourself as a reviewer",
+    ko: "자기 자신을 리뷰어로 추가할 수 없습니다",
+  },
+  prCreateSuccess: {
+    en: "\n✅ PR created successfully!\nURL: %s",
+    ko: "\n✅ PR 생성 성공!\nURL: %s",
+  },
 };
 
 export function getMessage(key: string, lang: "en" | "ko" = "en", ...args: any[]): string {

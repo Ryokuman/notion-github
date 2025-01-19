@@ -74,10 +74,15 @@ export async function action(options: CreateOptions) {
           console.log(getMessage("reviewersAdded", lang, config.defaultReviewers.join(", ")));
         } catch (reviewError: any) {
           console.error(getMessage("reviewerAddFailed", lang));
-          console.error(getMessage("reviewerError", lang, reviewError.message));
+          if (reviewError.message.includes("Review cannot be requested from pull request author")) {
+            console.error(getMessage("selfReviewError", lang));
+          } else {
+            console.error(getMessage("reviewerError", lang, reviewError.message));
+          }
         }
       }
 
+      // PR URL 출력
       console.log(getMessage("prCreateSuccess", lang, response.data.html_url));
     } catch (e: any) {
       if (e.status === 401) {
