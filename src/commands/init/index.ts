@@ -8,5 +8,6 @@ export function initCommand(program: Command) {
     .option("--token <token>", "GitHub token")
     .option("--language <lang>", "Language setting (en|ko)", /^(en|ko)$/, "en")
     .option("--default-repo <repo>", "Default repository (owner/repo format)")
+    .option("--discord-webhook <url>", "Discord webhook URL for notifications")
     .action(action);
 }

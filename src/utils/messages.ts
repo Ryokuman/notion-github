@@ -122,6 +122,14 @@ export const messages: Messages = {
     en: "\n✅ PR created successfully!\nURL: %s",
     ko: "\n✅ PR 생성 성공!\nURL: %s",
   },
+  discordNotificationSent: {
+    en: "\nDiscord notification sent successfully",
+    ko: "\n디스코드 알림이 전송되었습니다",
+  },
+  discordNotificationFailed: {
+    en: "\nFailed to send Discord notification: %s",
+    ko: "\n디스코드 알림 전송 실패: %s",
+  },
 };
 
 export function getMessage(key: string, lang: "en" | "ko" = "en", ...args: any[]): string {

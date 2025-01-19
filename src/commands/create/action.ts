@@ -3,6 +3,7 @@ import { CreateOptions } from "./types";
 import { readConfig } from "../../utils/config";
 import { execSync } from "child_process";
 import { getMessage } from "../../utils/messages";
+import { sendDiscordNotification } from "../../utils/discord";
 
 export async function action(options: CreateOptions) {
   let lang: "en" | "ko" = "en";
@@ -84,6 +85,22 @@ export async function action(options: CreateOptions) {
 
       // PR URL 출력
       console.log(getMessage("prCreateSuccess", lang, response.data.html_url));
+
+      // PR 생성 후
+      if (config.discordWebhook) {
+        try {
+          await sendDiscordNotification(
+            config.discordWebhook,
+            options.title,
+            response.data.html_url,
+            config.defaultReviewers,
+            lang
+          );
+          console.log(getMessage("discordNotificationSent", lang));
+        } catch (error: any) {
+          console.error(getMessage("discordNotificationFailed", lang, error.message));
+        }
+      }
     } catch (e: any) {
       if (e.status === 401) {
         console.error(getMessage("accessError", lang));

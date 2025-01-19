@@ -9,6 +9,7 @@ export interface Config {
   language?: "ko" | "en";
   defaultRepository?: string;
   defaultReviewers?: string[]; // 배열 형식, 순서가 우선순위
+  discordWebhook?: string;
 }
 
 export function readConfig(): Config {
