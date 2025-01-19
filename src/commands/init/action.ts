@@ -15,7 +15,7 @@ export async function action(options: InitOptions) {
     const defaultConfig = {
       githubToken: options.token || "YOUR_GITHUB_TOKEN_HERE",
       language: options.language || "en",
-      defaultRepository: options.repository || "",
+      defaultRepository: options.defaultRepo || "",
       // 추가적인 기본 설정이 필요하다면 여기에 추가
     };
 

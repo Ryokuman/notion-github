@@ -86,6 +86,22 @@ export const messages: Messages = {
     en: "\nNo repository specified. Please provide --repo option or set defaultRepository in ng-config.json",
     ko: "\n레포지토리가 지정되지 않았습니다. --repo 옵션을 사용하거나 ng-config.json에 defaultRepository를 설정해주세요",
   },
+  validationError: {
+    en: "\nValidation failed:",
+    ko: "\n유효성 검사 실패:",
+  },
+  checkHeadBranch: {
+    en: "- Please check if head branch '%s' exists in the repository",
+    ko: "- head 브랜치 '%s'가 레포지토리에 존재하는지 확인해주세요",
+  },
+  checkBaseBranch: {
+    en: "- Please check if base branch '%s' exists in the repository",
+    ko: "- base 브랜치 '%s'가 레포지토리에 존재하는지 확인해주세요",
+  },
+  checkExistingPR: {
+    en: "- Please check if a PR already exists for these branches",
+    ko: "- 이미 동일한 브랜치로 생성된 PR이 있는지 확인해주세요",
+  },
 };
 
 export function getMessage(key: string, lang: "en" | "ko" = "en", ...args: any[]): string {
