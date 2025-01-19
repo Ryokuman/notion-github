@@ -102,6 +102,14 @@ export const messages: Messages = {
     en: "- Please check if a PR already exists for these branches",
     ko: "- 이미 동일한 브랜치로 생성된 PR이 있는지 확인해주세요",
   },
+  reviewersAdded: {
+    en: "Default reviewers have been added to the PR",
+    ko: "기본 리뷰어가 PR에 추가되었습니다",
+  },
+  reviewerAddFailed: {
+    en: "Failed to add reviewers to the PR",
+    ko: "리뷰어 추가에 실패했습니다",
+  },
 };
 
 export function getMessage(key: string, lang: "en" | "ko" = "en", ...args: any[]): string {

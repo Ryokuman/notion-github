@@ -6,8 +6,9 @@ const CONFIG_FILE = "ng-config.json";
 
 export interface Config {
   githubToken: string;
-  language?: "ko" | "en"; // 기본값은 'en'
-  defaultRepository?: string; // 추가: "owner/repo" 형식
+  language?: "ko" | "en";
+  defaultRepository?: string;
+  defaultReviewers?: string[]; // 배열 형식, 순서가 우선순위
 }
 
 export function readConfig(): Config {

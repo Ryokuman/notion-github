@@ -62,6 +62,21 @@ export async function action(options: CreateOptions) {
         body: options.description,
       });
 
+      // 기본 리뷰어가 설정되어 있는 경우에만 리뷰어 추가
+      if (config.defaultReviewers && config.defaultReviewers.length > 0) {
+        try {
+          await octokit.pulls.requestReviewers({
+            owner,
+            repo,
+            pull_number: response.data.number,
+            reviewers: config.defaultReviewers,
+          });
+          console.log(getMessage("reviewersAdded", lang));
+        } catch (reviewError) {
+          console.error(getMessage("reviewerAddFailed", lang));
+        }
+      }
+
       console.log(getMessage("prCreateSuccess", lang, response.data.html_url));
     } catch (e: any) {
       if (e.status === 401) {
