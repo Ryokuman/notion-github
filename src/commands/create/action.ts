@@ -52,24 +52,20 @@ export async function action(options: CreateOptions) {
         body: options.description,
       });
 
-      console.log(`\n✅ PR이 성공적으로 생성되었습니다: ${response.data.html_url}`);
+      console.log(getMessage("prCreateSuccess", lang, response.data.html_url));
     } catch (e: any) {
-      if (e.message.includes("Not Found")) {
-        console.error(getMessage("repoNotFound", lang));
-        console.error(`- ${owner}/${repo} 레포지토리가 존재하는지 확인해주세요`);
-        console.error("- GitHub 토큰이 해당 레포지토리에 접근 권한이 있는지 확인해주세요");
+      if (e.status === 401) {
+        console.error(getMessage("accessError", lang));
+        console.error(getMessage("checkToken", lang));
+        console.error(getMessage("checkRepoExists", lang, `${owner}/${repo}`));
       } else if (e.message.includes("Validation Failed")) {
-        console.error(getMessage("branchValidationFailed", lang));
-        console.error(`- head 브랜치(${options.head})가 원격 저장소에 있는지 확인해주세요`);
-        console.error(`- base 브랜치(${options.base || "main"})가 원격 저장소에 있는지 확인해주세요`);
-        console.error("- 이미 동일한 브랜치로 생성된 PR이 있는지 확인해주세요");
-      } else if (e.message.includes("Bad credentials")) {
-        console.error(getMessage("authError", lang));
-        console.error("- GitHub 토큰이 유효한지 확인해주세요");
-        console.error("- 토큰이 만료되지 않았는지 확인해주세요");
+        console.error(getMessage("validationError", lang));
+        console.error(getMessage("checkHeadBranch", lang, options.head));
+        console.error(getMessage("checkBaseBranch", lang, options.base || "main"));
+        console.error(getMessage("checkExistingPR", lang));
       } else {
         console.error(getMessage("unknownError", lang));
-        console.error(e.message);
+        console.error(getMessage("commandError", lang, e.message));
       }
       process.exit(1);
     }
@@ -80,9 +76,10 @@ export async function action(options: CreateOptions) {
         console.error(getMessage("checkGitConfig", lang));
         console.error(getMessage("checkRepoPermission", lang));
         console.error(getMessage("checkBranchName", lang));
+        console.error(getMessage("commandError", lang, error.message));
       } else {
         console.error(getMessage("unexpectedError", lang));
-        console.error(error.message);
+        console.error(getMessage("commandError", lang, error.message));
       }
     } else {
       console.error(getMessage("unknownError", lang));

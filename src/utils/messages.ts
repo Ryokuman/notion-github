@@ -54,7 +54,34 @@ export const messages: Messages = {
     en: "\nRepository not found:",
     ko: "\n레포지토리를 찾을 수 없습니다:",
   },
-  // ... 나머지 메시지들도 추가
+  authError: {
+    en: "\nAuthentication failed:",
+    ko: "\n인증 실패:",
+  },
+  checkToken: {
+    en: "- Please check if your GitHub token is valid",
+    ko: "- GitHub 토큰이 유효한지 확인해주세요",
+  },
+  checkTokenExpiry: {
+    en: "- Please check if your token has not expired",
+    ko: "- 토큰이 만료되지 않았는지 확인해주세요",
+  },
+  commandError: {
+    en: "\nError details: %s",
+    ko: "\n상세 오류: %s",
+  },
+  upToDate: {
+    en: "Everything up-to-date",
+    ko: "모든 것이 최신 상태입니다",
+  },
+  accessError: {
+    en: "\nAccess Error:",
+    ko: "\n접근 오류:",
+  },
+  checkRepoExists: {
+    en: "- Please check if repository %s exists",
+    ko: "- %s 레포지토리가 존재하는지 확인해주세요",
+  },
 };
 
 export function getMessage(key: string, lang: "en" | "ko" = "en", ...args: any[]): string {
