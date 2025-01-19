@@ -30,6 +30,6 @@
     "commander": "^11.0.0"
   },
   "bin": {
-    "pr-cli": "dist/cli.cjs"
+    "pr-cli": "dist/cli.js"
   }
 }
