@@ -2,42 +2,56 @@ import { Octokit } from "@octokit/rest";
 import { CreateOptions } from "./types";
 import { readConfig } from "../../utils/config";
 import { execSync } from "child_process";
+import { getMessage } from "../../utils/messages";
 
 export async function action(options: CreateOptions) {
+  let lang: "en" | "ko" = "en";
+
   try {
     const config = readConfig();
+    lang = config.language || "en";
+
+    // repo가 없으면 config에서 가져오기
+    if (!options.repo) {
+      if (!config.defaultRepository) {
+        console.error(getMessage("noRepoSpecified", lang));
+        process.exit(1);
+      }
+      options.repo = config.defaultRepository;
+    }
+
+    const [owner, repo] = options.repo.split("/");
     const octokit = new Octokit({ auth: config.githubToken });
 
     // 2. 레포지토리 형식 검증
-    const [owner, repo] = options.repo.split("/");
     if (!owner || !repo) {
-      console.error("\n레포지토리 형식 오류:");
-      console.error("- 올바른 형식: owner/repo");
-      console.error("- 예시: Ryokuman/testing");
+      console.error(getMessage("repoFormatError", lang));
+      console.error(getMessage("repoFormatExample", lang));
+      console.error(getMessage("repoFormatSample", lang));
       process.exit(1);
     }
 
     // 3. 브랜치 push
-    console.log("\n브랜치 확인 및 push 중...");
+    console.log(getMessage("checkingBranches", lang));
     try {
       // main 브랜치 push
-      console.log("- main 브랜치 push 중...");
+      console.log(getMessage("pushingMainBranch", lang));
       execSync("git push -u origin main", { stdio: "inherit" });
 
       // 현재 브랜치 push
-      console.log(`- ${options.head} 브랜치 push 중...`);
+      console.log(getMessage("pushingBranch", lang, options.head));
       execSync(`git push -u origin ${options.head}`, { stdio: "inherit" });
     } catch (error) {
-      console.error("\n브랜치 push 실패:");
-      console.error("- git 설정이 올바른지 확인해주세요");
-      console.error("- 원격 저장소에 대한 push 권한이 있는지 확인해주세요");
-      console.error("- 브랜치 이름에 특수문자나 공백이 없는지 확인해주세요");
-      if (error instanceof Error) console.error(`\n상세 오류: ${error.message}`);
+      console.error(getMessage("branchPushError", lang));
+      console.error(getMessage("checkGitConfig", lang));
+      console.error(getMessage("checkRepoPermission", lang));
+      console.error(getMessage("checkBranchName", lang));
+      if (error instanceof Error) console.error(`\n${error.message}`);
       process.exit(1);
     }
 
     // 4. PR 생성
-    console.log("\nPR 생성 중...");
+    console.log(getMessage("creatingPR", lang));
     try {
       const response = await octokit.pulls.create({
         owner,
@@ -48,40 +62,58 @@ export async function action(options: CreateOptions) {
         body: options.description,
       });
 
-      console.log(`\n✅ PR이 성공적으로 생성되었습니다: ${response.data.html_url}`);
+      // 기본 리뷰어가 설정되어 있는 경우에만 리뷰어 추가
+      if (config.defaultReviewers && config.defaultReviewers.length > 0) {
+        try {
+          await octokit.pulls.requestReviewers({
+            owner,
+            repo,
+            pull_number: response.data.number,
+            reviewers: config.defaultReviewers,
+          });
+          console.log(getMessage("reviewersAdded", lang, config.defaultReviewers.join(", ")));
+        } catch (reviewError: any) {
+          console.error(getMessage("reviewerAddFailed", lang));
+          if (reviewError.message.includes("Review cannot be requested from pull request author")) {
+            console.error(getMessage("selfReviewError", lang));
+          } else {
+            console.error(getMessage("reviewerError", lang, reviewError.message));
+          }
+        }
+      }
+
+      // PR URL 출력
+      console.log(getMessage("prCreateSuccess", lang, response.data.html_url));
     } catch (e: any) {
-      if (e.message.includes("Not Found")) {
-        console.error("\n레포지토리를 찾을 수 없습니다:");
-        console.error(`- ${owner}/${repo} 레포지토리가 존재하는지 확인해주세요`);
-        console.error("- GitHub 토큰이 해당 레포지토리에 접근 권한이 있는지 확인해주세요");
+      if (e.status === 401) {
+        console.error(getMessage("accessError", lang));
+        console.error(getMessage("checkToken", lang));
+        console.error(getMessage("checkRepoExists", lang, `${owner}/${repo}`));
       } else if (e.message.includes("Validation Failed")) {
-        console.error("\n브랜치 검증 실패:");
-        console.error(`- head 브랜치(${options.head})가 원격 저장소에 있는지 확인해주세요`);
-        console.error(`- base 브랜치(${options.base || "main"})가 원격 저장소에 있는지 확인해주세요`);
-        console.error("- 이미 동일한 브랜치로 생성된 PR이 있는지 확인해주세요");
-      } else if (e.message.includes("Bad credentials")) {
-        console.error("\n인증 실패:");
-        console.error("- GitHub 토큰이 유효한지 확인해주세요");
-        console.error("- 토큰이 만료되지 않았는지 확인해주세요");
+        console.error(getMessage("validationError", lang));
+        console.error(getMessage("checkHeadBranch", lang, options.head));
+        console.error(getMessage("checkBaseBranch", lang, options.base || "main"));
+        console.error(getMessage("checkExistingPR", lang));
       } else {
-        console.error("\n알 수 없는 오류가 발생했습니다:");
-        console.error(e.message);
+        console.error(getMessage("unknownError", lang));
+        console.error(getMessage("commandError", lang, e.message));
       }
       process.exit(1);
     }
   } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes("git push")) {
-        console.error("\n브랜치 push 실패:");
-        console.error("- git 설정이 올바른지 확인해주세요");
-        console.error("- 원격 저장소에 대한 push 권한이 있는지 확인해주세요");
-        console.error("- 브랜치 이름에 특수문자나 공백이 없는지 확인해주세요");
+        console.error(getMessage("branchPushError", lang));
+        console.error(getMessage("checkGitConfig", lang));
+        console.error(getMessage("checkRepoPermission", lang));
+        console.error(getMessage("checkBranchName", lang));
+        console.error(getMessage("commandError", lang, error.message));
       } else {
-        console.error("\n예상치 못한 오류가 발생했습니다:");
-        console.error(error.message);
+        console.error(getMessage("unexpectedError", lang));
+        console.error(getMessage("commandError", lang, error.message));
       }
     } else {
-      console.error("\n알 수 없는 오류가 발생했습니다");
+      console.error(getMessage("unknownError", lang));
     }
     process.exit(1);
   }

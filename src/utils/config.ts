@@ -4,7 +4,14 @@ import os from "os";
 
 const CONFIG_FILE = "ng-config.json";
 
-export function readConfig(): { githubToken: string } {
+export interface Config {
+  githubToken: string;
+  language?: "ko" | "en";
+  defaultRepository?: string;
+  defaultReviewers?: string[]; // 배열 형식, 순서가 우선순위
+}
+
+export function readConfig(): Config {
   try {
     const currentDirPath = path.join(process.cwd(), CONFIG_FILE);
 
@@ -15,7 +22,10 @@ export function readConfig(): { githubToken: string } {
         throw new Error("GitHub token not found in config file.");
       }
 
-      return config;
+      return {
+        ...config,
+        language: config.language || "en", // 기본값 설정
+      };
     }
 
     throw new Error(`Config file not found at ${currentDirPath}`);
