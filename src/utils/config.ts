@@ -9,6 +9,14 @@ export interface Config {
   language?: "ko" | "en";
   defaultRepository?: string;
   defaultReviewers?: string[]; // 배열 형식, 순서가 우선순위
+  discordWebhook?: string;
+  discordTemplate?: {
+    ko?: string;
+    en?: string;
+  };
+  discordReviewerMapping?: {
+    [githubId: string]: string; // GitHub ID -> Discord ID 매핑
+  };
 }
 
 export function readConfig(): Config {

@@ -25,7 +25,15 @@ This will create `ng-config.json`:
   "githubToken": "YOUR_GITHUB_TOKEN",
   "language": "en",
   "defaultRepository": "owner/repo",
-  "defaultReviewers": ["reviewer1", "reviewer2"]
+  "defaultReviewers": ["reviewer1", "reviewer2"],
+  "discordWebhook": "YOUR_DISCORD_WEBHOOK_URL",
+  "discordTemplate": {
+    "ko": "🎉 새로운 PR!\n${title}\n${url}\n${reviewers} 입니다.",
+    "en": "🎉 New PR!\n${title}\n${url}\n${reviewers} desu"
+  },
+  "discordReviewerMapping": {
+    "githubId": "discordId"
+  }
 }
 ```
 
