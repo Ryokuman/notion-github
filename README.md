@@ -53,7 +53,7 @@ MIT
 
 ## 설정
 
-1. 홈 디렉토리에 `notion_github_config.json` 파일을 생성합니다:
+1. 프로젝트 디렉토리에 `ng-config.json` 파일을 생성합니다:
 
 ```json
 {
