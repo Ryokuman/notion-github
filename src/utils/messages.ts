@@ -82,6 +82,10 @@ export const messages: Messages = {
     en: "- Please check if repository %s exists",
     ko: "- %s 레포지토리가 존재하는지 확인해주세요",
   },
+  noRepoSpecified: {
+    en: "\nNo repository specified. Please provide --repo option or set defaultRepository in ng-config.json",
+    ko: "\n레포지토리가 지정되지 않았습니다. --repo 옵션을 사용하거나 ng-config.json에 defaultRepository를 설정해주세요",
+  },
 };
 
 export function getMessage(key: string, lang: "en" | "ko" = "en", ...args: any[]): string {

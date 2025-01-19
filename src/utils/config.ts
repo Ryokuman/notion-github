@@ -7,6 +7,7 @@ const CONFIG_FILE = "ng-config.json";
 export interface Config {
   githubToken: string;
   language?: "ko" | "en"; // 기본값은 'en'
+  defaultRepository?: string; // 추가: "owner/repo" 형식
 }
 
 export function readConfig(): Config {

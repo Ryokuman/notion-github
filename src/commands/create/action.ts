@@ -5,15 +5,25 @@ import { execSync } from "child_process";
 import { getMessage } from "../../utils/messages";
 
 export async function action(options: CreateOptions) {
-  let lang: "en" | "ko" = "en"; // 기본값 설정
+  let lang: "en" | "ko" = "en";
 
   try {
     const config = readConfig();
-    lang = config.language || "en"; // 여기서 설정
+    lang = config.language || "en";
+
+    // repo가 없으면 config에서 가져오기
+    if (!options.repo) {
+      if (!config.defaultRepository) {
+        console.error(getMessage("noRepoSpecified", lang));
+        process.exit(1);
+      }
+      options.repo = config.defaultRepository;
+    }
+
+    const [owner, repo] = options.repo.split("/");
     const octokit = new Octokit({ auth: config.githubToken });
 
     // 2. 레포지토리 형식 검증
-    const [owner, repo] = options.repo.split("/");
     if (!owner || !repo) {
       console.error(getMessage("repoFormatError", lang));
       console.error(getMessage("repoFormatExample", lang));
