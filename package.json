@@ -1,6 +1,6 @@
 {
   "name": "notion-github",
-  "version": "1.0.6",
+  "version": "1.0.10",
   "description": "GitHub and Notion integration for PR automation",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

@@ -27,13 +27,13 @@ export async function sendDiscordNotification(
 ) {
   // 기본 템플릿
   const defaultTemplate = {
-    ko: ["# 🎉 새로운 PR이 생성되었습니다!", "## 제목", "> ${title}", "## 링크", "> ${url}", "${reviewers}"].join("\n"),
-    en: ["# 🎉 New PR Created!", "## Title", "> ${title}", "## Link", "> ${url}", "${reviewers}"].join("\n"),
+    ko: ["🎉 새로운 PR이 생성되었습니다!", "${title}", "${url}", "${reviewers}"].join("\n"),
+    en: ["🎉 New PR Created!", "${title}", "${url}", "${reviewers}"].join("\n"),
   };
 
   const selectedTemplate = (template && template[lang]) || defaultTemplate[lang];
 
-  // 리뷰어 Discord ID 매핑
+  // 리뷰어 Discord ID 매핑 (다시 <@ID> 형식으로 변경)
   const mappedReviewers = reviewers?.map((reviewer) => {
     const discordId = discordReviewerMapping?.[reviewer];
     return discordId ? `<@${discordId}>` : `@${reviewer}`;
@@ -42,18 +42,18 @@ export async function sendDiscordNotification(
   let message = selectedTemplate
     .replace("${title}", prTitle)
     .replace("${url}", prUrl)
-    .replace(
-      "${reviewers}",
-      mappedReviewers && mappedReviewers.length > 0
-        ? `## ${lang === "ko" ? "리뷰어" : "Reviewers"}\n> ${mappedReviewers.join(", ")}`
-        : ""
-    );
+    .replace("${reviewers}", mappedReviewers && mappedReviewers.length > 0 ? mappedReviewers.join(", ") : "");
 
   try {
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: message }),
+      body: JSON.stringify({
+        content: message,
+        allowed_mentions: {
+          parse: ["users"], // 유저 멘션 허용
+        },
+      }),
     });
 
     if (!response.ok) {
